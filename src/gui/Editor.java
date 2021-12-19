@@ -8,13 +8,10 @@ public class Editor extends JTextPane {
 
     public static final int DEFAULT_FONT_SIZE = 45;
 
-    private StyleContext style;
-    private AttributeSet textStyle;
-
     private int fontSize = 0;
 
     final StyleContext cont = StyleContext.getDefaultStyleContext();
-    final AttributeSet moveKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(144, 255, 125));//23,161,165 || 211 84 0 || 94,109,3
+    final AttributeSet moveKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(144, 255, 125));
     final AttributeSet valueKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(201, 153, 255));
     final AttributeSet loopKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(0, 82, 255));
     final AttributeSet consoleKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(255, 0, 43));

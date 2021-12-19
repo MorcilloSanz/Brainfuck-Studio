@@ -30,6 +30,7 @@ public class BrainfuckStudio extends JFrame {
     private Editor editor;
 
     private Brainfuck brainfuck;
+    private Console console;
 
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
         frameProperties();
@@ -47,6 +48,8 @@ public class BrainfuckStudio extends JFrame {
 
     private void initComponents() throws IOException, URISyntaxException, FontFormatException {
         brainfuck = new Brainfuck();
+        console = new Console();
+        brainfuck.setConsole(console);
         loadFont();
         loadMenuBar();
         loadPanels();
@@ -82,7 +85,7 @@ public class BrainfuckStudio extends JFrame {
         buttonRun.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println(editor.getText());
+                brainfuck.execute(editor.getText());
             }
         });
         buttonRun.setIcon(new ImageIcon(this.getClass().getResource("/resources/play.png")));
@@ -90,6 +93,12 @@ public class BrainfuckStudio extends JFrame {
 
         JButton buttonStop = new JButton();
         buttonStop.setIcon(new ImageIcon(this.getClass().getResource("/resources/stop.png")));
+        buttonStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                brainfuck.setRunning(false);
+            }
+        });
         toolbar.add(buttonStop);
 
         upPanel.add(toolbar);
@@ -100,7 +109,8 @@ public class BrainfuckStudio extends JFrame {
 
         downPanel = new JPanel();
         downPanel.setLayout(new BoxLayout(downPanel,BoxLayout.Y_AXIS));
-
+        TransparentScrollPane scrollPaneConsole = new TransparentScrollPane(console);
+        downPanel.add(scrollPaneConsole);
 
         splitPane = new JSplitPane(SwingConstants.HORIZONTAL, upPanel, downPanel);
         splitPane.setResizeWeight(0.8);
@@ -120,15 +130,16 @@ public class BrainfuckStudio extends JFrame {
         }
     }
 
-    private void loadFont() throws IOException, FontFormatException, URISyntaxException {
+    private void showFonts() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        URL resource = this.getClass().getResource("/fonts/Cloude_Regular_1.02.otf");
-        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
-        /*
         for(String fontName : ge.getAvailableFontFamilyNames())
             System.out.println(fontName);
-        */
+    }
+
+    private void loadFont() throws IOException, FontFormatException, URISyntaxException {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        URL resource = this.getClass().getResource("/fonts/Cloude_Regular_1.02.otf");
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
         setUIFont(new FontUIResource(new Font("Cloude Regular 1.0", 0, 30)));
     }
 
