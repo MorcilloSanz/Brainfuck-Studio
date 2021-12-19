@@ -31,6 +31,7 @@ public class BrainfuckStudio extends JFrame {
 
     private Brainfuck brainfuck;
     private Console console;
+    private Debugger debugger;
 
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
         frameProperties();
@@ -50,6 +51,8 @@ public class BrainfuckStudio extends JFrame {
         brainfuck = new Brainfuck();
         console = new Console();
         brainfuck.setConsole(console);
+        debugger = new Debugger();
+        brainfuck.setDebugger(debugger);
         loadFont();
         loadMenuBar();
         loadPanels();
@@ -97,6 +100,7 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 brainfuck.setRunning(false);
+                debugger.reset();
             }
         });
         toolbar.add(buttonStop);
@@ -109,6 +113,7 @@ public class BrainfuckStudio extends JFrame {
 
         downPanel = new JPanel();
         downPanel.setLayout(new BoxLayout(downPanel,BoxLayout.Y_AXIS));
+        downPanel.add(debugger);
         TransparentScrollPane scrollPaneConsole = new TransparentScrollPane(console);
         downPanel.add(scrollPaneConsole);
 

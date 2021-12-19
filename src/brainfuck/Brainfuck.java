@@ -1,6 +1,7 @@
 package brainfuck;
 
 import gui.Console;
+import gui.Debugger;
 
 import java.util.Arrays;
 
@@ -14,6 +15,7 @@ public class Brainfuck {
     private volatile boolean running = false;
 
     private Console console;
+    private Debugger debugger;
 
     public Brainfuck(int bytes) {
         buffer = new byte[bytes];
@@ -28,14 +30,20 @@ public class Brainfuck {
         this.console = console;
     }
 
+    public void setDebugger(Debugger debugger) {
+        this.debugger = debugger;
+    }
+
     private synchronized void log(char c) {
         console.log("" + c);
     }
 
     public synchronized void setRunning(boolean running) {
         this.running = running;
-        if(!running)
+        if(!running) {
             Arrays.fill(buffer, (byte) 0);
+            pointer = 0;
+        }
     }
 
     public synchronized void execute(final String code) {
@@ -49,6 +57,7 @@ public class Brainfuck {
 
     public void executeCode(final String code) {
         console.reset();
+        debugger.reset();
         for(int i = 0; i < code.length(); i ++) {
             if(!running) break;
             int brackets = 0;
@@ -106,6 +115,8 @@ public class Brainfuck {
                 default:
                     break;
             }
+            debugger.setActive(pointer);
+            debugger.setValue(pointer, buffer[pointer]);
         }
         setRunning(false);
     }

@@ -56,6 +56,10 @@ public class StylesLoader {
         UIManager.put("TextArea.caretForeground", Color.decode("#FFFFFF"));
         UIManager.put("TextArea.selectionForeground", Color.decode("#000000"));
         UIManager.put("TextArea.selectionBackground", Color.decode("#c999ff"));
+        // TextField
+        UIManager.put("TextField.background", Color.decode("#333333"));
+        UIManager.put("TextField.foreground", Color.decode("#FFFFFF"));
+        UIManager.put("TextField.border", BorderFactory.createLineBorder(Color.decode("#222222"), 1));
         // Scroll pane
         UIManager.put("ScrollPane.background", Color.decode("#333333"));
         UIManager.put("ScrollPane.foreground", Color.decode("#FFFFFF"));
