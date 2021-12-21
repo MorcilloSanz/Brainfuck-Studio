@@ -9,10 +9,6 @@ public class TransparentScrollPane extends JScrollPane {
     TransparentScrollPane(JComponent editor) {
         super(editor);
         init();
-        /*
-        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        */
     }
 
     private void init() {

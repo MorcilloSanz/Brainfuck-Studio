@@ -20,9 +20,13 @@ public class BrainfuckStudio extends JFrame {
     public static final int DEFAULT_HEIGHT = 700;
     public static final String TITLE = "Brainfuck Studio";
 
+    public static final String FONT = "Pixeltype";
+    public static final int FONT_SIZE = 26;
+
     private JMenuBar menuBar;
     private JMenu menuFile, menuAbout;
     private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs;
+    private String fileName, filePath; // When opening a file
 
     private JTabbedPane tabbedPane;
     private JPanel upPanel, downPanel;
@@ -77,16 +81,24 @@ public class BrainfuckStudio extends JFrame {
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if(!tabComponent.isSaved()) {
+                    // Ask to the user if remove
+
+                    // if not, return;
+                }
                 tabbedPane.remove(tab);
             }
         });
         tab.getEditor().setTabComponent(tabComponent);
+        tabbedPane.setSelectedComponent(tab);
     }
 
     private void open() throws IOException, BadLocationException {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
+        filePath = file.getPath();
+        fileName = file.getName();
         //read file
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         String line, code = "";
@@ -96,6 +108,14 @@ public class BrainfuckStudio extends JFrame {
         bufferedReader.close();
         // Open in editor
         createTab(code);
+
+        EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        editorTab.setFilePath(file.getPath());
+        editorTab.setFileName(file.getName());
+
+        TabComponent tabComponent = (TabComponent) tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+        tabComponent.setTitle(file.getName());
+        tabComponent.setSave(true);
     }
 
     private void saveAs() throws IOException {
@@ -153,7 +173,13 @@ public class BrainfuckStudio extends JFrame {
         menuItemOpen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                try {
+                    open();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
             }
         });
         menuFile.add(menuItemOpen);
@@ -259,9 +285,9 @@ public class BrainfuckStudio extends JFrame {
 
     private void loadFont() throws IOException, FontFormatException, URISyntaxException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        URL resource = this.getClass().getResource("/fonts/Cloude_Regular_1.02.otf");
+        URL resource = this.getClass().getResource("/fonts/Pixeltype.ttf");
         ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
-        setUIFont(new FontUIResource(new Font("Cloude Regular 1.0", 0, 30)));
+        setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE)));
     }
 
     public static void main(String [] args) {

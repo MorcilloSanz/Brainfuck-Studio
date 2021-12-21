@@ -7,7 +7,7 @@ public class Console extends JTextArea {
 
     Console() {
         super();
-        setFont(new Font("Cloude Regular 1.0", 0, 30));
+        setFont(new Font(BrainfuckStudio.FONT, 0, 30));
     }
 
     public void log(final String msg) {

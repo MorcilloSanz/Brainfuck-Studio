@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class Editor extends JTextPane {
 
-    public static final int DEFAULT_FONT_SIZE = 45;
+    public static final int DEFAULT_FONT_SIZE = 32;
 
     private String text;
     private int fontSize = 0;
@@ -57,6 +57,10 @@ public class Editor extends JTextPane {
 
         };
         setDocument(doc);
+        // Set default text
+        try {
+            doc.insertString(doc.getLength(), text, null);
+        }catch (Exception e) {}
     }
 
     public void setTabComponent(TabComponent tabComponent) {
@@ -65,7 +69,7 @@ public class Editor extends JTextPane {
 
     public void setFontSize(int size) {
         fontSize = size;
-        setFont(new Font("Cloude Regular 1.0", 0, size));
+        setFont(new Font(BrainfuckStudio.FONT, 0, size));
     }
 
     public int getFontSize() {

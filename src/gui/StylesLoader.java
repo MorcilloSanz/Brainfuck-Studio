@@ -66,7 +66,6 @@ public class StylesLoader {
         UIManager.put("ScrollPane.background", Color.decode("#333333"));
         UIManager.put("ScrollPane.foreground", Color.decode("#FFFFFF"));
         UIManager.put("ScrollPane.border", BorderFactory.createLineBorder(Color.decode("#222222"), 0));
-        // new ColorUIResource(new Color(57,57,57))Scroll bar
         UIManager.put("ScrollBar.background", new ColorUIResource(Color.decode("#333333")));
         // Tabbed pane
         UIManager.put("TabbedPane.borderColor", Color.decode("#333333"));

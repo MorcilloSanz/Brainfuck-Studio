@@ -9,6 +9,8 @@ public class TabComponent extends JPanel {
     private JLabel label, labelSave;
     private int index;
 
+    boolean save;
+
     public TabComponent(int index, final ImageIcon icon, final String title, JButton closeButton) {
         this.index = index;
         setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
@@ -33,7 +35,12 @@ public class TabComponent extends JPanel {
     }
 
     public void setSave(boolean save) {
+        this.save = save;
         labelSave.setText((save) ? "" : ".");
+    }
+
+    public boolean isSaved() {
+        return save;
     }
 
     public void setTitle(final String title) {

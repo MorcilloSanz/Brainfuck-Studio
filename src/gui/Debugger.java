@@ -1,17 +1,22 @@
 package gui;
 
+import brainfuck.Brainfuck;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Debugger extends JPanel {
 
-    public static final int MAX_FIELDS = 35;
+    public static final int MAX_FIELDS = 40;
     public static final int SIZE = 30;
+
+    public static final int FONT_SIZE = 32;
 
     private ArrayList<JTextField> memoryFields = new ArrayList<>();
 
     private JPanel panelCells;
+    private Brainfuck brainfuck;
 
     public Debugger() {
         super();
@@ -25,7 +30,7 @@ public class Debugger extends JPanel {
     private void generateMemoryFields() {
         for(int i = 0; i < MAX_FIELDS; i ++) {
             JTextField textField = new JTextField("0");
-            textField.setFont(new Font("Cloude Regular 1.0", 0, 40));
+            textField.setFont(new Font(BrainfuckStudio.FONT, 0, FONT_SIZE));
             textField.setDisabledTextColor(Color.white);
             textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, SIZE));
             textField.setHorizontalAlignment(JTextField.CENTER);
@@ -65,5 +70,13 @@ public class Debugger extends JPanel {
 
             index ++;
         }
+    }
+
+    public void setBrainfuck(Brainfuck brainfuck) {
+        this.brainfuck = brainfuck;
+    }
+
+    public int length() {
+        return memoryFields.size();
     }
 }

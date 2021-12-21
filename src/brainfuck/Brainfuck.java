@@ -32,6 +32,7 @@ public class Brainfuck {
 
     public void setDebugger(Debugger debugger) {
         this.debugger = debugger;
+        debugger.setBrainfuck(this);
     }
 
     private synchronized void log(char c) {
@@ -116,9 +117,17 @@ public class Brainfuck {
                     break;
             }
             debugger.setActive(pointer);
-            debugger.setValue(pointer, buffer[pointer]);
+            if(pointer < debugger.length() - 1)
+                debugger.setValue(pointer, buffer[pointer]);
         }
         setRunning(false);
     }
 
+    public int getPointer() {
+        return pointer;
+    }
+
+    public byte[] getBuffer() {
+        return buffer;
+    }
 }
