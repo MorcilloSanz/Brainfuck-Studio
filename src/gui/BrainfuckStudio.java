@@ -25,7 +25,7 @@ public class BrainfuckStudio extends JFrame {
 
     private JMenuBar menuBar;
     private JMenu menuFile, menuAbout;
-    private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs;
+    private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs, menuItemInfo;
     private String fileName, filePath; // When opening a file
 
     private JTabbedPane tabbedPane;
@@ -38,11 +38,12 @@ public class BrainfuckStudio extends JFrame {
     private Console console;
     private Debugger debugger;
 
-    private ImageIcon tabIcon, crossIcon;
+    private ImageIcon icon, tabIcon, crossIcon;
 
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
         tabIcon = new ImageIcon(this.getClass().getResource("/resources/bfFile.png"));
         crossIcon = new ImageIcon(this.getClass().getResource("/resources/x.png"));
+        icon = new ImageIcon(this.getClass().getResource("/resources/logo-small.png"));
         frameProperties();
     }
 
@@ -51,6 +52,7 @@ public class BrainfuckStudio extends JFrame {
         setTitle(TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(true);
+        setIconImage(icon.getImage());
         setLocationRelativeTo(null);
         initComponents();
         setVisible(true);
@@ -103,7 +105,7 @@ public class BrainfuckStudio extends JFrame {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         String line, code = "";
         while((line = bufferedReader.readLine()) != null) {
-            code += line;
+            code += line + "\n";
         }
         bufferedReader.close();
         // Open in editor
@@ -213,6 +215,15 @@ public class BrainfuckStudio extends JFrame {
 
         // Menu about
         menuAbout = new JMenu("About");
+
+        menuItemInfo = new JMenuItem("Info");
+        menuItemInfo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                About about = new About();
+            }
+        });
+        menuAbout.add(menuItemInfo);
 
         menuBar.add(menuFile);
         menuBar.add(menuAbout);

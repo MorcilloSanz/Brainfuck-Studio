@@ -49,7 +49,6 @@ public class Debugger extends JPanel {
             memoryFields.get(index).setForeground(Color.decode("#FFFFFF"));
             index ++;
         }
-
     }
 
     public void setValue(int pos, byte value) {
