@@ -34,9 +34,11 @@ public class StylesLoader {
         UIManager.put("Button.selectionForeground", Color.decode("#c999ff"));
         UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
         UIManager.put("Button.select", false);
+        // Label
+        UIManager.put("Label.foreground", Color.decode("#FFFFFF"));
         // Panel
         UIManager.put("Panel.background", Color.decode("#333333"));
-        UIManager.put("Panel.border", BorderFactory.createLineBorder(Color.decode("#333333"), 1));
+        UIManager.put("Panel.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
         // Split pane
         UIManager.put("SplitPane.background", Color.decode("#333333"));
         UIManager.put("SplitPane.foreground", Color.decode("#c999ff"));
@@ -64,7 +66,19 @@ public class StylesLoader {
         UIManager.put("ScrollPane.background", Color.decode("#333333"));
         UIManager.put("ScrollPane.foreground", Color.decode("#FFFFFF"));
         UIManager.put("ScrollPane.border", BorderFactory.createLineBorder(Color.decode("#222222"), 0));
-        // Scroll bar
+        // new ColorUIResource(new Color(57,57,57))Scroll bar
         UIManager.put("ScrollBar.background", new ColorUIResource(Color.decode("#333333")));
+        // Tabbed pane
+        UIManager.put("TabbedPane.borderColor", Color.decode("#333333"));
+        UIManager.put("TabbedPane.darkShadow", Color.decode("#333333"));
+        UIManager.put("TabbedPane.light", Color.decode("#333333"));
+        UIManager.put("TabbedPane.highlight", Color.decode("#333333"));
+        UIManager.put("TabbedPane.focus", Color.decode("#333333"));
+        UIManager.put("TabbedPane.unselectedBackground", Color.decode("#222222"));
+        UIManager.put("TabbedPane.selectHighlight", Color.decode("#333333"));
+        UIManager.put("TabbedPane.tabAreaBackground", Color.decode("#333333"));
+        UIManager.put("TabbedPane.borderHightlightColor", Color.decode("#333333"));
+        UIManager.put("TabbedPane.selected", Color.decode("#c999ff"));
+        UIManager.put("TabbedPane.contentBorderInsets" , new Insets(0, 0, 0, 0));
     }
 }

@@ -11,9 +11,14 @@ public class Debugger extends JPanel {
 
     private ArrayList<JTextField> memoryFields = new ArrayList<>();
 
+    private JPanel panelCells;
+
     public Debugger() {
         super();
         setLayout(new BoxLayout(this ,BoxLayout.X_AXIS));
+
+        panelCells = new JPanel();
+        panelCells.setLayout(new BoxLayout(panelCells ,BoxLayout.X_AXIS));
         generateMemoryFields();
     }
 
@@ -21,12 +26,14 @@ public class Debugger extends JPanel {
         for(int i = 0; i < MAX_FIELDS; i ++) {
             JTextField textField = new JTextField("0");
             textField.setFont(new Font("Cloude Regular 1.0", 0, 40));
-            textField.setMaximumSize(new Dimension(SIZE, SIZE));
+            textField.setDisabledTextColor(Color.white);
+            textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, SIZE));
             textField.setHorizontalAlignment(JTextField.CENTER);
             textField.setEnabled(false);
             memoryFields.add(textField);
-            add(textField);
+            panelCells.add(textField);
         }
+        add(panelCells);
     }
 
     public void reset() {
@@ -34,6 +41,7 @@ public class Debugger extends JPanel {
         for(JTextField textField : memoryFields) {
             textField.setText("0");
             memoryFields.get(index).setBackground(Color.decode("#333333"));
+            memoryFields.get(index).setForeground(Color.decode("#FFFFFF"));
             index ++;
         }
 

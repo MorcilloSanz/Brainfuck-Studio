@@ -8,6 +8,7 @@ public class Editor extends JTextPane {
 
     public static final int DEFAULT_FONT_SIZE = 45;
 
+    private String text;
     private int fontSize = 0;
 
     final StyleContext cont = StyleContext.getDefaultStyleContext();
@@ -17,15 +18,18 @@ public class Editor extends JTextPane {
     final AttributeSet consoleKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(255, 0, 43));
     final AttributeSet comment = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.decode("#FFFFFF"));
 
-    public Editor() {
+    private TabComponent tabComponent;
+
+    public Editor(final String text) throws BadLocationException {
         super();
+        this.text = text;
         fontSize = DEFAULT_FONT_SIZE;
         setFontSize(DEFAULT_FONT_SIZE);
         setMargin( new Insets(10,10,10,10) );
         initDocument();
     }
 
-    private void initDocument() {
+    private void initDocument() throws BadLocationException {
         DefaultStyledDocument doc = new DefaultStyledDocument() {
             @Override
             public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
@@ -43,6 +47,7 @@ public class Editor extends JTextPane {
                     else
                         setCharacterAttributes(offset + i, 1, comment, false);
                 }
+                tabComponent.setSave(false);
             }
 
             @Override
@@ -52,6 +57,10 @@ public class Editor extends JTextPane {
 
         };
         setDocument(doc);
+    }
+
+    public void setTabComponent(TabComponent tabComponent) {
+        this.tabComponent = tabComponent;
     }
 
     public void setFontSize(int size) {

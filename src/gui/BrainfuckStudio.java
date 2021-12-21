@@ -4,11 +4,12 @@ import brainfuck.Brainfuck;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.KeyEvent;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -21,19 +22,23 @@ public class BrainfuckStudio extends JFrame {
 
     private JMenuBar menuBar;
     private JMenu menuFile, menuAbout;
-    private JMenuItem menuItemOpen, menuItemSave;
+    private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs;
 
+    private JTabbedPane tabbedPane;
     private JPanel upPanel, downPanel;
     private JSplitPane splitPane;
 
     private ToolBar toolbar;
-    private Editor editor;
 
     private Brainfuck brainfuck;
     private Console console;
     private Debugger debugger;
 
+    private ImageIcon tabIcon, crossIcon;
+
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
+        tabIcon = new ImageIcon(this.getClass().getResource("/resources/bfFile.png"));
+        crossIcon = new ImageIcon(this.getClass().getResource("/resources/x.png"));
         frameProperties();
     }
 
@@ -58,17 +63,127 @@ public class BrainfuckStudio extends JFrame {
         loadPanels();
     }
 
+    private void createTab(final String text) throws BadLocationException {
+        EditorTab tab = new EditorTab(text);
+        tabbedPane.add(tab);
+        int index = tabbedPane.getTabCount() - 1;
+        tabbedPane.setIconAt(index, tabIcon);
+
+        JButton closeButton = new JButton();
+        closeButton.setOpaque(false);
+        closeButton.setIcon(crossIcon);
+        TabComponent tabComponent = new TabComponent(index, tabIcon, "untitled", closeButton);
+        tabbedPane.setTabComponentAt(index, tabComponent);
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                tabbedPane.remove(tab);
+            }
+        });
+        tab.getEditor().setTabComponent(tabComponent);
+    }
+
+    private void open() throws IOException, BadLocationException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.showOpenDialog(fileChooser);
+        File file = fileChooser.getSelectedFile();
+        //read file
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String line, code = "";
+        while((line = bufferedReader.readLine()) != null) {
+            code += line;
+        }
+        bufferedReader.close();
+        // Open in editor
+        createTab(code);
+    }
+
+    private void saveAs() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.showSaveDialog(fileChooser);
+        File file = fileChooser.getSelectedFile();
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        editorTab.setFilePath(file.getPath());
+        editorTab.setFileName(file.getName());
+        bufferedWriter.write(editorTab.getEditor().getText());
+        bufferedWriter.close();
+        TabComponent tabComponent = (TabComponent) tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+        tabComponent.setTitle(file.getName());
+        tabComponent.setSave(true);
+    }
+
+    private void save() throws IOException {
+        EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        if(editorTab.getFilePath() == null)
+            saveAs();
+        else {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(editorTab.getFilePath())));
+            bufferedWriter.write(editorTab.getEditor().getText());
+            bufferedWriter.close();
+        }
+        TabComponent tabComponent = (TabComponent) tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+        tabComponent.setTitle(editorTab.getFileName());
+        tabComponent.setSave(true);
+    }
+
     private void loadMenuBar() {
         menuBar = new JMenuBar();
 
         // Menu file
         menuFile = new JMenu("File");
 
+        menuItemNew = new JMenuItem("New");
+        menuItemNew.setAccelerator(
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+        menuItemNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    createTab("");
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        menuFile.add(menuItemNew);
+
         menuItemOpen = new JMenuItem("Open");
+        menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        menuItemOpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
         menuFile.add(menuItemOpen);
 
         menuItemSave = new JMenuItem("Save");
+        menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        menuItemSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    save();
+                } catch (IOException e) {
+                    console.log("Couldn't save file");
+                }
+            }
+        });
         menuFile.add(menuItemSave);
+
+        menuItemSaveAs = new JMenuItem("Save as");
+        menuItemSaveAs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    saveAs();
+                } catch (IOException e) {
+                    console.log("Couldn't save file");
+                }
+            }
+        });
+        menuFile.add(menuItemSaveAs);
 
         // Menu about
         menuAbout = new JMenu("About");
@@ -88,7 +203,8 @@ public class BrainfuckStudio extends JFrame {
         buttonRun.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                brainfuck.execute(editor.getText());
+                EditorTab tab = (EditorTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+                brainfuck.execute(tab.getEditor().getText());
             }
         });
         buttonRun.setIcon(new ImageIcon(this.getClass().getResource("/resources/play.png")));
@@ -107,9 +223,9 @@ public class BrainfuckStudio extends JFrame {
 
         upPanel.add(toolbar);
 
-        editor = new Editor();
-        TransparentScrollPane scrollPaneEditor = new TransparentScrollPane(editor);
-        upPanel.add(scrollPaneEditor);
+        tabbedPane = new JTabbedPane();
+
+        upPanel.add(tabbedPane);
 
         downPanel = new JPanel();
         downPanel.setLayout(new BoxLayout(downPanel,BoxLayout.Y_AXIS));
