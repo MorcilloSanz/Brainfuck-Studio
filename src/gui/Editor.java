@@ -59,6 +59,7 @@ public class Editor extends JTextPane {
             @Override
             public void remove(int offs, int len) throws BadLocationException {
                 super.remove(offs, len);
+                tabComponent.setSave(false);
             }
 
         };

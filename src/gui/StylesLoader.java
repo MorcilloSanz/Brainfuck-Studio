@@ -35,6 +35,7 @@ public class StylesLoader {
         UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
         UIManager.put("Button.select", false);
         // Label
+        UIManager.put("Label.textForeground", Color.decode("#FFFFFF"));
         UIManager.put("Label.foreground", Color.decode("#FFFFFF"));
         // Panel
         UIManager.put("Panel.background", Color.decode("#333333"));
@@ -79,5 +80,8 @@ public class StylesLoader {
         UIManager.put("TabbedPane.borderHightlightColor", Color.decode("#333333"));
         UIManager.put("TabbedPane.selected", Color.decode("#c999ff"));
         UIManager.put("TabbedPane.contentBorderInsets" , new Insets(0, 0, 0, 0));
+        // Option Pane
+        UIManager.put("OptionPane.background", Color.decode("#333333"));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
     }
 }

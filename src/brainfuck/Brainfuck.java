@@ -1,5 +1,6 @@
 package brainfuck;
 
+import gui.BrainfuckStudio;
 import gui.Console;
 import gui.Debugger;
 
@@ -16,6 +17,7 @@ public class Brainfuck {
 
     private Console console;
     private Debugger debugger;
+    private BrainfuckStudio brainfuckStudio;
 
     private volatile boolean wait = false;
     private String input;
@@ -38,6 +40,10 @@ public class Brainfuck {
         debugger.setBrainfuck(this);
     }
 
+    public void setBrainfuckStudio(BrainfuckStudio brainfuckStudio) {
+        this.brainfuckStudio = brainfuckStudio;
+    }
+
     private synchronized void log(char c) {
         console.log("" + c);
     }
@@ -47,6 +53,8 @@ public class Brainfuck {
         if(!running) {
             Arrays.fill(buffer, (byte) 0);
             pointer = 0;
+            if(brainfuckStudio != null)
+                brainfuckStudio.stopLoadingAnimation();
         }
     }
 

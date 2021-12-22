@@ -33,6 +33,7 @@ public class BrainfuckStudio extends JFrame {
     private JSplitPane splitPane;
 
     private ToolBar toolbar;
+    private JLabel loadingLabel;
 
     private Brainfuck brainfuck;
     private Console console;
@@ -68,6 +69,7 @@ public class BrainfuckStudio extends JFrame {
         loadFont();
         loadMenuBar();
         loadPanels();
+        brainfuck.setBrainfuckStudio(this);
     }
 
     private void createTab(final String text) throws BadLocationException {
@@ -85,9 +87,14 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!tabComponent.isSaved()) {
-                    // Ask to the user if remove
-
-                    // if not, return;
+                    int response = JOptionPane.showConfirmDialog(null, "Save file?", "Warning", JOptionPane.YES_NO_OPTION);
+                    if(response == JOptionPane.YES_OPTION) {
+                        try {
+                            save();
+                        } catch (IOException e) {
+                            System.out.println("Couldn't save file");
+                        }
+                    }
                 }
                 tabbedPane.remove(tab);
             }
@@ -155,8 +162,10 @@ public class BrainfuckStudio extends JFrame {
         menuBar = new JMenuBar();
         // Menu file
         menuFile = new JMenu("File");
+        menuFile.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         menuItemNew = new JMenuItem("New");
+        menuItemNew.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         menuItemNew.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         menuItemNew.addActionListener(new ActionListener() {
@@ -172,22 +181,22 @@ public class BrainfuckStudio extends JFrame {
         menuFile.add(menuItemNew);
 
         menuItemOpen = new JMenuItem("Open");
+        menuItemOpen.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         menuItemOpen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     open();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (BadLocationException e) {
-                    e.printStackTrace();
+                } catch (IOException | BadLocationException e) {
+                    console.log("Couldn't open file");
                 }
             }
         });
         menuFile.add(menuItemOpen);
 
         menuItemSave = new JMenuItem("Save");
+        menuItemSave.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         menuItemSave.addActionListener(new ActionListener() {
             @Override
@@ -202,6 +211,7 @@ public class BrainfuckStudio extends JFrame {
         menuFile.add(menuItemSave);
 
         menuItemSaveAs = new JMenuItem("Save as");
+        menuItemSaveAs.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         menuItemSaveAs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -216,8 +226,11 @@ public class BrainfuckStudio extends JFrame {
 
         // Menu about
         menuAbout = new JMenu("About");
+        menuAbout.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         menuItemInfo = new JMenuItem("Info");
+        menuItemInfo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        menuItemInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
         menuItemInfo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -243,6 +256,8 @@ public class BrainfuckStudio extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 EditorTab tab = (EditorTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
                 brainfuck.execute(tab.getEditor().getText());
+                if(loadingLabel != null)
+                    loadingLabel.setVisible(true);
             }
         });
         buttonRun.setIcon(new ImageIcon(this.getClass().getResource("/resources/play.png")));
@@ -255,9 +270,16 @@ public class BrainfuckStudio extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 brainfuck.setRunning(false);
                 debugger.reset();
+                if(loadingLabel != null)
+                    loadingLabel.setVisible(false);
             }
         });
         toolbar.add(buttonStop);
+
+        loadingLabel = new JLabel(new ImageIcon(this.getClass().getResource("/resources/DualRing.gif")));
+        loadingLabel.setPreferredSize(new Dimension(24, 24));
+        loadingLabel.setVisible(false);
+        toolbar.add(loadingLabel);
 
         upPanel.add(toolbar);
 
@@ -276,6 +298,10 @@ public class BrainfuckStudio extends JFrame {
         splitPane = new JSplitPane(SwingConstants.HORIZONTAL, upPanel, downPanel);
         splitPane.setResizeWeight(0.8);
         this.getContentPane().add(splitPane);
+    }
+
+    public void stopLoadingAnimation() {
+        loadingLabel.setVisible(false);
     }
 
     private static void setUIFont(FontUIResource f) {
