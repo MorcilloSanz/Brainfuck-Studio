@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Brainfuck-Studio:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Brainfuck_Studio_jar</output-path>
+    <root id="archive" name="Brainfuck-Studio.jar">
+      <element id="module-output" name="Brainfuck-Studio" />
+    </root>
+  </artifact>
+</component>

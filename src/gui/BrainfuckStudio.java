@@ -1,6 +1,8 @@
 package gui;
 
 import brainfuck.Brainfuck;
+import sun.misc.IOUtils;
+import sun.nio.ch.IOUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -12,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 
 public class BrainfuckStudio extends JFrame {
@@ -325,9 +329,9 @@ public class BrainfuckStudio extends JFrame {
 
     private void loadFont() throws IOException, FontFormatException, URISyntaxException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        URL resource = this.getClass().getResource("/fonts/Pixeltype.ttf");
-        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
-        setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE)));
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));
+        //setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE)));      // Linux
+        setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE - 2)));        // Windows
     }
 
     public static void main(String [] args) {
