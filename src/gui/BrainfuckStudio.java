@@ -43,7 +43,7 @@ public class BrainfuckStudio extends JFrame {
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
         tabIcon = new ImageIcon(this.getClass().getResource("/resources/bfFile.png"));
         crossIcon = new ImageIcon(this.getClass().getResource("/resources/x.png"));
-        icon = new ImageIcon(this.getClass().getResource("/resources/logo-small.png"));
+        icon = new ImageIcon(this.getClass().getResource("/resources/icon.png"));
         frameProperties();
     }
 
@@ -61,6 +61,7 @@ public class BrainfuckStudio extends JFrame {
     private void initComponents() throws IOException, URISyntaxException, FontFormatException {
         brainfuck = new Brainfuck();
         console = new Console();
+        console.setBrainfuck(brainfuck);
         brainfuck.setConsole(console);
         debugger = new Debugger();
         brainfuck.setDebugger(debugger);
@@ -93,6 +94,7 @@ public class BrainfuckStudio extends JFrame {
         });
         tab.getEditor().setTabComponent(tabComponent);
         tabbedPane.setSelectedComponent(tab);
+        tab.getEditor().requestFocusInWindow();
     }
 
     private void open() throws IOException, BadLocationException {
@@ -151,7 +153,6 @@ public class BrainfuckStudio extends JFrame {
 
     private void loadMenuBar() {
         menuBar = new JMenuBar();
-
         // Menu file
         menuFile = new JMenu("File");
 
@@ -261,11 +262,13 @@ public class BrainfuckStudio extends JFrame {
         upPanel.add(toolbar);
 
         tabbedPane = new JTabbedPane();
+        tabbedPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         upPanel.add(tabbedPane);
 
         downPanel = new JPanel();
         downPanel.setLayout(new BoxLayout(downPanel,BoxLayout.Y_AXIS));
+        downPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         downPanel.add(debugger);
         TransparentScrollPane scrollPaneConsole = new TransparentScrollPane(console);
         downPanel.add(scrollPaneConsole);

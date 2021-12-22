@@ -21,7 +21,11 @@ public class Debugger extends JPanel {
     public Debugger() {
         super();
         setLayout(new BoxLayout(this ,BoxLayout.X_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
+        JLabel labelMemory = new JLabel("Output: ");
+        labelMemory.setFont(new Font(BrainfuckStudio.FONT, 0, 32));
+        add(labelMemory);
         panelCells = new JPanel();
         panelCells.setLayout(new BoxLayout(panelCells ,BoxLayout.X_AXIS));
         generateMemoryFields();

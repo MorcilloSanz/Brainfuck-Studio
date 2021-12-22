@@ -14,7 +14,7 @@ public class About extends JFrame {
         setSize(WIDTH, HEIGHT);
         setTitle(TITLE);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        icon = new ImageIcon(this.getClass().getResource("/resources/logo-small.png"));
+        icon = new ImageIcon(this.getClass().getResource("/resources/icon.png"));
         setIconImage(icon.getImage());
         setResizable(false);
         setLocationRelativeTo(null);
@@ -26,6 +26,7 @@ public class About extends JFrame {
     private void addPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.X_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 
         JLabel logo = new JLabel();
@@ -41,7 +42,7 @@ public class About extends JFrame {
         panel2.add(info);
         JLabel dev = new JLabel("Dev: Alberto Morcillo Sanz");
         panel2.add(dev);
-        JLabel email = new JLabel("Mail: amorcillosanz@gmail.com");
+        JLabel email = new JLabel("E-mail: amorcillosanz@gmail.com");
         panel2.add(email);
 
         panel.add(panel2);

@@ -1,8 +1,13 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.*;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class Editor extends JTextPane {
 
@@ -19,13 +24,14 @@ public class Editor extends JTextPane {
     final AttributeSet comment = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.decode("#FFFFFF"));
 
     private TabComponent tabComponent;
+    private UndoManager undoManager;
 
     public Editor(final String text) throws BadLocationException {
         super();
         this.text = text;
         fontSize = DEFAULT_FONT_SIZE;
         setFontSize(DEFAULT_FONT_SIZE);
-        setMargin( new Insets(10,10,10,10) );
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
         initDocument();
     }
 
@@ -56,6 +62,27 @@ public class Editor extends JTextPane {
             }
 
         };
+        // Set undo listener
+        undoManager = new UndoManager();
+        doc.addUndoableEditListener(new UndoableEditListener() {
+            @Override
+            public void undoableEditHappened(UndoableEditEvent undoableEditEvent) {
+                undoManager.addEdit(undoableEditEvent.getEdit());
+            }
+        });
+        getActionMap().put("Undo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    if(undoManager.canUndo())
+                        undoManager.undo();
+                }catch (CannotUndoException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+        // Set current document
         setDocument(doc);
         // Set default text
         try {

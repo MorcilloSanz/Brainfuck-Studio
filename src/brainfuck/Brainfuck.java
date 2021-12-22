@@ -17,6 +17,9 @@ public class Brainfuck {
     private Console console;
     private Debugger debugger;
 
+    private volatile boolean wait = false;
+    private String input;
+
     public Brainfuck(int bytes) {
         buffer = new byte[bytes];
         Arrays.fill(buffer, (byte) 0);
@@ -104,7 +107,10 @@ public class Brainfuck {
                 }
                 break;
                 case ',': {
-
+                    wait = true;
+                    do {/* wait for the user to give an input */} while(wait);
+                    byte value = (byte)input.charAt(0);
+                    buffer[pointer] = value;
                 }
                 break;
                 case '.': {
@@ -121,6 +127,15 @@ public class Brainfuck {
                 debugger.setValue(pointer, buffer[pointer]);
         }
         setRunning(false);
+    }
+
+    public synchronized void setInput(final String input) {
+        this.input = input;
+        wait = false;
+    }
+
+    public synchronized void setWait(boolean wait) {
+        this.wait = wait;
     }
 
     public int getPointer() {
