@@ -58,16 +58,16 @@ public class Brainfuck {
         }
     }
 
-    public synchronized void execute(final String code) {
+    public synchronized void execute(final String code, boolean debug) {
         if(!running) {
             running = true;
             new Thread(() -> {
-                executeCode(code);
+                executeCode(code, debug);
             }).start();
         }
     }
 
-    public void executeCode(final String code) {
+    public void executeCode(final String code, boolean debug) {
         console.reset();
         debugger.reset();
         for(int i = 0; i < code.length(); i ++) {
@@ -130,9 +130,10 @@ public class Brainfuck {
                 default:
                     break;
             }
-            debugger.setActive(pointer);
-            if(pointer < debugger.length() - 1)
+            if(debug && (pointer < debugger.length() - 1)) {
+                debugger.setActive(pointer);
                 debugger.setValue(pointer, buffer[pointer]);
+            }
         }
         setRunning(false);
     }

@@ -115,7 +115,6 @@ public class BrainfuckStudio extends JFrame {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
-        stylesLoader.loadDark();
         filePath = file.getPath();
         fileName = file.getName();
         //read file
@@ -268,13 +267,29 @@ public class BrainfuckStudio extends JFrame {
                     return;
 
                 EditorTab tab = (EditorTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-                brainfuck.execute(tab.getEditor().getText());
+                brainfuck.execute(tab.getEditor().getText(), false);
                 if(loadingLabel != null)
                     loadingLabel.setVisible(true);
             }
         });
         buttonRun.setIcon(new ImageIcon(this.getClass().getResource("/resources/play.png")));
         toolbar.add(buttonRun);
+
+        JButton buttonDebug = new JButton();
+        buttonDebug.setIcon(new ImageIcon(this.getClass().getResource("/resources/debug.png")));
+        buttonDebug.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(tabbedPane.getTabCount() <= 0)
+                    return;
+
+                EditorTab tab = (EditorTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+                brainfuck.execute(tab.getEditor().getText(), true);
+                if(loadingLabel != null)
+                    loadingLabel.setVisible(true);
+            }
+        });
+        toolbar.add(buttonDebug);
 
         JButton buttonStop = new JButton();
         buttonStop.setIcon(new ImageIcon(this.getClass().getResource("/resources/stop.png")));

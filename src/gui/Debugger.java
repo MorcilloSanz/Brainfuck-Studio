@@ -62,15 +62,12 @@ public class Debugger extends JPanel {
     public void setActive(int pos) {
         int index = 0;
         for(JTextField textField : memoryFields) {
-            if(index == pos) {
+            if(index == pos)
                 memoryFields.get(index).setBackground(Color.decode("#c999ff"));
-                memoryFields.get(index).setDisabledTextColor(Color.decode("#000000"));
-            }
             else {
                 memoryFields.get(index).setBackground(Color.decode("#333333"));
                 memoryFields.get(index).setDisabledTextColor(Color.decode("#FFFFFF"));
             }
-
             index ++;
         }
     }
