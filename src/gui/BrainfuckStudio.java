@@ -1,8 +1,6 @@
 package gui;
 
 import brainfuck.Brainfuck;
-import sun.misc.IOUtils;
-import sun.nio.ch.IOUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -14,8 +12,6 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 
 public class BrainfuckStudio extends JFrame {
@@ -26,6 +22,8 @@ public class BrainfuckStudio extends JFrame {
 
     public static final String FONT = "Pixeltype";
     public static final int FONT_SIZE = 26;
+
+    private StylesLoader stylesLoader;
 
     private JMenuBar menuBar;
     private JMenu menuFile, menuAbout;
@@ -45,7 +43,12 @@ public class BrainfuckStudio extends JFrame {
 
     private ImageIcon icon, tabIcon, crossIcon;
 
+    private String os;
+
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
+        os = System.getProperty("os.name").toLowerCase();
+        stylesLoader = new StylesLoader();
+        stylesLoader.loadDark();
         tabIcon = new ImageIcon(this.getClass().getResource("/resources/bfFile.png"));
         crossIcon = new ImageIcon(this.getClass().getResource("/resources/x.png"));
         icon = new ImageIcon(this.getClass().getResource("/resources/icon.png"));
@@ -112,6 +115,7 @@ public class BrainfuckStudio extends JFrame {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
+        stylesLoader.loadDark();
         filePath = file.getPath();
         fileName = file.getName();
         //read file
@@ -206,7 +210,8 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    save();
+                    if(tabbedPane.getTabCount() > 0)
+                        save();
                 } catch (IOException e) {
                     console.log("Couldn't save file");
                 }
@@ -220,7 +225,8 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    saveAs();
+                    if(tabbedPane.getTabCount() > 0)
+                        saveAs();
                 } catch (IOException e) {
                     console.log("Couldn't save file");
                 }
@@ -258,6 +264,9 @@ public class BrainfuckStudio extends JFrame {
         buttonRun.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if(tabbedPane.getTabCount() <= 0)
+                    return;
+
                 EditorTab tab = (EditorTab) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
                 brainfuck.execute(tab.getEditor().getText());
                 if(loadingLabel != null)
@@ -272,6 +281,9 @@ public class BrainfuckStudio extends JFrame {
         buttonStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                if(tabbedPane.getTabCount() <= 0)
+                    return;
+
                 brainfuck.setRunning(false);
                 debugger.reset();
                 if(loadingLabel != null)
@@ -329,13 +341,25 @@ public class BrainfuckStudio extends JFrame {
 
     private void loadFont() throws IOException, FontFormatException, URISyntaxException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));
-        //setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE)));      // Linux
-        setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE - 2)));        // Windows
+
+        // Only use this two when compiling in IDE
+        URL resource = this.getClass().getResource("/fonts/Pixeltype.ttf");
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
+
+        //ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));  // Use this lines for .jar
+
+        if(os.contains("win"))
+            setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE - 2)));
+        else
+            setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE)));
+
+    }
+
+    public void applyLookAndFeel() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
 
     public static void main(String [] args) {
-        StylesLoader.loadDark();
         try {
             BrainfuckStudio brainfuckStudio = new BrainfuckStudio();
         } catch (IOException | URISyntaxException | FontFormatException e) {

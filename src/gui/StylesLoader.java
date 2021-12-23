@@ -6,8 +6,7 @@ import java.awt.*;
 
 public class StylesLoader {
 
-    public static void loadDark() {
-
+    public void loadDark() {
         // Menu bar
         UIManager.put("MenuBar.background", Color.decode("#333333"));
         UIManager.put("MenuBar.selectionBackground", Color.decode("#c999ff"));
@@ -32,7 +31,7 @@ public class StylesLoader {
         UIManager.put("Button.background", Color.decode("#333333"));
         UIManager.put("Button.foreground", Color.decode("#FFFFFF"));
         UIManager.put("Button.selectionForeground", Color.decode("#c999ff"));
-        UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#222222"), 0));
         UIManager.put("Button.select", false);
         // Label
         UIManager.put("Label.textForeground", Color.decode("#FFFFFF"));
@@ -83,5 +82,9 @@ public class StylesLoader {
         // Option Pane
         UIManager.put("OptionPane.background", Color.decode("#333333"));
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("OptionPane.buttonPadding", 10);
+        // Fiile Chooser
+        UIManager.put("FileChooser.listViewBackground", Color.decode("#888888"));
+        UIManager.put("FileChooser.listViewForeground", Color.decode("#ffffff"));
     }
 }
