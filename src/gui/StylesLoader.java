@@ -6,6 +6,36 @@ import java.awt.*;
 
 public class StylesLoader {
 
+    public void beforeLookAndFeel() {
+        UIManager.put("Label.textForeground", Color.decode("#000000"));
+        UIManager.put("Label.foreground", Color.decode("#000000"));
+
+        UIManager.put("Panel.background", Color.decode("#EEEEEE"));
+
+        UIManager.put("TextField.background", Color.decode("#FFFFFF"));
+        UIManager.put("TextField.foreground", Color.decode("#000000"));
+        UIManager.put("TextField.border", BorderFactory.createLineBorder(Color.decode("#222222"), 1));
+
+        UIManager.put("Button.background", Color.decode("#EEEEEE"));
+        UIManager.put("Button.foreground", Color.decode("#000000"));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#222222"), 1));
+    }
+
+    public void afterLookAndFeel() {
+        UIManager.put("Label.textForeground", Color.decode("#FFFFFF"));
+        UIManager.put("Label.foreground", Color.decode("#FFFFFF"));
+
+        UIManager.put("Panel.background", Color.decode("#333333"));
+
+        UIManager.put("TextField.background", Color.decode("#333333"));
+        UIManager.put("TextField.foreground", Color.decode("#FFFFFF"));
+        UIManager.put("TextField.border", BorderFactory.createLineBorder(Color.decode("#222222"), 1));
+
+        UIManager.put("Button.background", Color.decode("#333333"));
+        UIManager.put("Button.foreground", Color.decode("#FFFFFF"));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#222222"), 0));
+    }
+
     public void loadDark() {
         // Menu bar
         UIManager.put("MenuBar.background", Color.decode("#333333"));
@@ -83,8 +113,5 @@ public class StylesLoader {
         UIManager.put("OptionPane.background", Color.decode("#333333"));
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
         UIManager.put("OptionPane.buttonPadding", 10);
-        // Fiile Chooser
-        UIManager.put("FileChooser.listViewBackground", Color.decode("#888888"));
-        UIManager.put("FileChooser.listViewForeground", Color.decode("#ffffff"));
     }
 }

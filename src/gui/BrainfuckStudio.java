@@ -1,6 +1,7 @@
 package gui;
 
 import brainfuck.Brainfuck;
+import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -94,12 +95,13 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(!tabComponent.isSaved()) {
-                    int response = JOptionPane.showConfirmDialog(null, "Save file?", "Warning", JOptionPane.YES_NO_OPTION);
-                    if(response == JOptionPane.YES_OPTION) {
+                    ConfirmPane confirmPane = new ConfirmPane("Warning", "Save file?");
+                    int response = confirmPane.getResponse();
+                    if(response == ConfirmPane.YES) {
                         try {
                             save();
                         } catch (IOException e) {
-                            System.out.println("Couldn't save file");
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -112,9 +114,13 @@ public class BrainfuckStudio extends JFrame {
     }
 
     private void open() throws IOException, BadLocationException {
-        JFileChooser fileChooser = new JFileChooser();
+
+        stylesLoader.beforeLookAndFeel();
+        JSystemFileChooser fileChooser = new JSystemFileChooser();
         fileChooser.showOpenDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
+        stylesLoader.afterLookAndFeel();
+
         filePath = file.getPath();
         fileName = file.getName();
         //read file
@@ -137,9 +143,12 @@ public class BrainfuckStudio extends JFrame {
     }
 
     private void saveAs() throws IOException {
-        JFileChooser fileChooser = new JFileChooser();
+        stylesLoader.beforeLookAndFeel();
+        JSystemFileChooser fileChooser = new JSystemFileChooser();
         fileChooser.showSaveDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
+        stylesLoader.afterLookAndFeel();
+
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
         EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
         editorTab.setFilePath(file.getPath());
@@ -358,6 +367,7 @@ public class BrainfuckStudio extends JFrame {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         // Only use this two when compiling in IDE
+
         URL resource = this.getClass().getResource("/fonts/Pixeltype.ttf");
         ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
 
@@ -370,8 +380,12 @@ public class BrainfuckStudio extends JFrame {
 
     }
 
-    public void applyLookAndFeel() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    public void applyLookAndFeel()  {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String [] args) {
