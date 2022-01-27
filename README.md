@@ -1,4 +1,4 @@
-# Brainfuck-Studio
+# Brainfuck-Studio 🧠
 Brainfuck IDE, compiler and debugger
 
 [https://brainfuck-studio.itch.io/brainfuck-studio](https://brainfuck-studio.itch.io/brainfuck-studio)
