@@ -5,7 +5,7 @@ Brainfuck IDE, compiler and debugger
 
 ## Brainfuck -> C 
 
-```
+```c
 >	++ptr;
 <	--ptr;
 +	++*ptr;
