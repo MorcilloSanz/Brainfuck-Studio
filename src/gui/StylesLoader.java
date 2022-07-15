@@ -63,6 +63,8 @@ public class StylesLoader {
         UIManager.put("Button.selectionForeground", Color.decode("#c999ff"));
         UIManager.put("Button.border", BorderFactory.createLineBorder(Color.decode("#222222"), 0));
         UIManager.put("Button.select", false);
+        //JSlider
+        UIManager.put("Slider.select", false);
         // Label
         UIManager.put("Label.textForeground", Color.decode("#FFFFFF"));
         UIManager.put("Label.foreground", Color.decode("#FFFFFF"));

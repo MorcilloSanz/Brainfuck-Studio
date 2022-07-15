@@ -3,6 +3,7 @@ package gui;
 import brainfuck.Brainfuck;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -45,7 +46,21 @@ public class Console extends JTextArea {
         insert(msg, getText().length());
     }
 
+    public void select() {
+        Border border = BorderFactory.createLineBorder(Color.decode("#c999ff"));
+        setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        requestFocus();
+    }
+
+    public void deselect() {
+        Border border = BorderFactory.createLineBorder(Color.BLACK);
+        setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+    }
+
     public void reset() {
+        deselect();
         setText("");
     }
 }

@@ -22,6 +22,8 @@ public class Brainfuck {
     private volatile boolean wait = false;
     private String input;
 
+    private int sleepMs = 0;
+
     public Brainfuck(int bytes) {
         buffer = new byte[bytes];
         Arrays.fill(buffer, (byte) 0);
@@ -116,7 +118,9 @@ public class Brainfuck {
                 break;
                 case ',': {
                     wait = true;
+                    console.select();
                     do {/* wait for the user to give an input */} while(wait);
+                    console.deselect();
                     byte value = (byte)input.charAt(0);
                     buffer[pointer] = value;
                 }
@@ -125,6 +129,7 @@ public class Brainfuck {
                     char ch = (char) buffer[pointer];
                     log(ch);
                     output += ch;
+                    console.setCaretPosition(console.getDocument().getLength());
                 }
                 break;
                 default:
@@ -134,8 +139,18 @@ public class Brainfuck {
                 debugger.setActive(pointer);
                 debugger.setValue(pointer, buffer[pointer]);
             }
+            // Sleep time
+            try {
+                Thread.sleep(sleepMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         setRunning(false);
+    }
+
+    public synchronized void setSleepMs(int sleepMs) {
+        this.sleepMs = sleepMs;
     }
 
     public synchronized void setInput(final String input) {

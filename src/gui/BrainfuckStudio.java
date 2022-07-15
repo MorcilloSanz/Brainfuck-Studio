@@ -1,9 +1,11 @@
 package gui;
 
 import brainfuck.Brainfuck;
-import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
@@ -13,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 
 public class BrainfuckStudio extends JFrame {
@@ -116,10 +119,16 @@ public class BrainfuckStudio extends JFrame {
     private void open() throws IOException, BadLocationException {
 
         stylesLoader.beforeLookAndFeel();
-        JSystemFileChooser fileChooser = new JSystemFileChooser();
+        JFileChooser fileChooser = null;
+        if(os.contains("win"))
+            fileChooser = new JSystemFileChooser();
+        else
+            fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(fileChooser);
         File file = fileChooser.getSelectedFile();
         stylesLoader.afterLookAndFeel();
+
+        if(file == null) return;
 
         filePath = file.getPath();
         fileName = file.getName();
@@ -144,9 +153,17 @@ public class BrainfuckStudio extends JFrame {
 
     private void saveAs() throws IOException {
         stylesLoader.beforeLookAndFeel();
-        JSystemFileChooser fileChooser = new JSystemFileChooser();
+
+        File file = null;
+        JFileChooser fileChooser = null;
+        if(os.contains("win"))
+            fileChooser = new JSystemFileChooser();
+        else
+            fileChooser = new JFileChooser();
+
         fileChooser.showSaveDialog(fileChooser);
-        File file = fileChooser.getSelectedFile();
+        file = fileChooser.getSelectedFile();
+
         stylesLoader.afterLookAndFeel();
 
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
@@ -268,6 +285,31 @@ public class BrainfuckStudio extends JFrame {
         upPanel.setLayout(new BoxLayout(upPanel,BoxLayout.Y_AXIS));
 
         toolbar = new ToolBar();
+
+        JPanel panelSpeed = new JPanel();
+        panelSpeed.setBorder(new EmptyBorder(0, 20, 0, 20));
+        panelSpeed.setLayout(new BoxLayout(panelSpeed, BoxLayout.X_AXIS));
+        panelSpeed.add(new JLabel("Sleep "));
+
+        JSlider slider = new JSlider(0, 1000);
+        slider.setValue(0);
+        slider.setBackground(Color.decode("#333333"));
+        slider.setFocusable(false);
+        slider.setPaintLabels(true);
+        slider.setMajorTickSpacing(250);
+        slider.setBorder(null);
+        slider.setUI(new CustomSliderUI(slider));
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                brainfuck.setSleepMs(slider.getValue());
+            }
+        });
+        panelSpeed.add(slider);
+
+
+        toolbar.add(panelSpeed);
+
         JButton buttonRun = new JButton();
         buttonRun.addActionListener(new ActionListener() {
             @Override
@@ -366,12 +408,11 @@ public class BrainfuckStudio extends JFrame {
     private void loadFont() throws IOException, FontFormatException, URISyntaxException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        // Only use this two when compiling in IDE
+        // Use this line in editor
+        //ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(this.getClass().getResource("/fonts/Pixeltype.ttf").toURI())));
 
-        URL resource = this.getClass().getResource("/fonts/Pixeltype.ttf");
-        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(resource.toURI())));
-
-        //ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));  // Use this lines for .jar
+        // Use this line for .jar
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));
 
         if(os.contains("win"))
             setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE - 2)));
