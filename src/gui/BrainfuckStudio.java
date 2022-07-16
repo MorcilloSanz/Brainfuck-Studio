@@ -3,10 +3,13 @@ package gui;
 import brainfuck.Brainfuck;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,11 +17,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 
 public class BrainfuckStudio extends JFrame {
+
+    // Set COMPILE_JAR to true when creating JAR (there is some different code for JAR),
+    // When compiling with IDE, set it to false
+    // ------------------------------------------------
+    public static boolean COMPILE_JAR = true;
+    // ------------------------------------------------
 
     public static final int DEFAULT_WIDTH = 1080;
     public static final int DEFAULT_HEIGHT = 700;
@@ -30,8 +37,8 @@ public class BrainfuckStudio extends JFrame {
     private StylesLoader stylesLoader;
 
     private JMenuBar menuBar;
-    private JMenu menuFile, menuAbout;
-    private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs, menuItemInfo;
+    private JMenu menuFile, menuHelp, menuAbout;
+    private JMenuItem menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs, menuItemHelpDialog, menuItemInfo;
     private String fileName, filePath; // When opening a file
 
     private JTabbedPane tabbedPane;
@@ -50,6 +57,7 @@ public class BrainfuckStudio extends JFrame {
     private String os;
 
     public BrainfuckStudio() throws IOException, URISyntaxException, FontFormatException {
+        super();
         os = System.getProperty("os.name").toLowerCase();
         stylesLoader = new StylesLoader();
         stylesLoader.loadDark();
@@ -68,6 +76,7 @@ public class BrainfuckStudio extends JFrame {
         setLocationRelativeTo(null);
         initComponents();
         setVisible(true);
+        setFocusable(true);
     }
 
     private void initComponents() throws IOException, URISyntaxException, FontFormatException {
@@ -103,10 +112,12 @@ public class BrainfuckStudio extends JFrame {
                     if(response == ConfirmPane.YES) {
                         try {
                             save();
+                            return;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
+                    }if(response == ConfirmPane.CANCEL || response == ConfirmPane.NONE)
+                        return;
                 }
                 tabbedPane.remove(tab);
             }
@@ -151,7 +162,7 @@ public class BrainfuckStudio extends JFrame {
         tabComponent.setSave(true);
     }
 
-    private void saveAs() throws IOException {
+    private boolean saveAs() throws IOException {
         stylesLoader.beforeLookAndFeel();
 
         File file = null;
@@ -166,21 +177,27 @@ public class BrainfuckStudio extends JFrame {
 
         stylesLoader.afterLookAndFeel();
 
+        if(file == null) return false;
+
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
         EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
         editorTab.setFilePath(file.getPath());
         editorTab.setFileName(file.getName());
         bufferedWriter.write(editorTab.getEditor().getText());
         bufferedWriter.close();
+
         TabComponent tabComponent = (TabComponent) tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
         tabComponent.setTitle(file.getName());
         tabComponent.setSave(true);
+
+        return true;
     }
 
     private void save() throws IOException {
         EditorTab editorTab = (EditorTab)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-        if(editorTab.getFilePath() == null)
-            saveAs();
+        if(editorTab.getFilePath() == null) {
+            if(!saveAs()) return;
+        }
         else {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(editorTab.getFilePath())));
             bufferedWriter.write(editorTab.getEditor().getText());
@@ -250,14 +267,31 @@ public class BrainfuckStudio extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 try {
-                    if(tabbedPane.getTabCount() > 0)
-                        saveAs();
+                    if(tabbedPane.getTabCount() > 0) {
+                        boolean saved = saveAs();
+                    }
                 } catch (IOException e) {
                     console.log("Couldn't save file");
                 }
             }
         });
         menuFile.add(menuItemSaveAs);
+
+        // Menu help
+        menuHelp = new JMenu("Help");
+        menuHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        menuItemHelpDialog = new JMenuItem("Help dialog");
+        menuItemHelpDialog.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        menuItemHelpDialog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+
+        menuItemHelpDialog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Help help = new Help();
+            }
+        });
+        menuHelp.add(menuItemHelpDialog);
 
         // Menu about
         menuAbout = new JMenu("About");
@@ -275,6 +309,7 @@ public class BrainfuckStudio extends JFrame {
         menuAbout.add(menuItemInfo);
 
         menuBar.add(menuFile);
+        menuBar.add(menuHelp);
         menuBar.add(menuAbout);
 
         setJMenuBar(menuBar);
@@ -285,30 +320,6 @@ public class BrainfuckStudio extends JFrame {
         upPanel.setLayout(new BoxLayout(upPanel,BoxLayout.Y_AXIS));
 
         toolbar = new ToolBar();
-
-        JPanel panelSpeed = new JPanel();
-        panelSpeed.setBorder(new EmptyBorder(0, 20, 0, 20));
-        panelSpeed.setLayout(new BoxLayout(panelSpeed, BoxLayout.X_AXIS));
-        panelSpeed.add(new JLabel("Sleep "));
-
-        JSlider slider = new JSlider(0, 1000);
-        slider.setValue(0);
-        slider.setBackground(Color.decode("#333333"));
-        slider.setFocusable(false);
-        slider.setPaintLabels(true);
-        slider.setMajorTickSpacing(250);
-        slider.setBorder(null);
-        slider.setUI(new CustomSliderUI(slider));
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                brainfuck.setSleepMs(slider.getValue());
-            }
-        });
-        panelSpeed.add(slider);
-
-
-        toolbar.add(panelSpeed);
 
         JButton buttonRun = new JButton();
         buttonRun.addActionListener(new ActionListener() {
@@ -324,6 +335,7 @@ public class BrainfuckStudio extends JFrame {
             }
         });
         buttonRun.setIcon(new ImageIcon(this.getClass().getResource("/resources/play.png")));
+        buttonRun.setToolTipText("Run");
         toolbar.add(buttonRun);
 
         JButton buttonDebug = new JButton();
@@ -340,7 +352,19 @@ public class BrainfuckStudio extends JFrame {
                     loadingLabel.setVisible(true);
             }
         });
+        buttonDebug.setToolTipText("Debug");
         toolbar.add(buttonDebug);
+
+        JButton buttonContinue = new JButton();
+        buttonContinue.setIcon(new ImageIcon(this.getClass().getResource("/resources/continue.png")));
+        buttonContinue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                brainfuck.setStop(false);
+            }
+        });
+        buttonContinue.setToolTipText("Continue");
+        toolbar.add(buttonContinue);
 
         JButton buttonStop = new JButton();
         buttonStop.setIcon(new ImageIcon(this.getClass().getResource("/resources/stop.png")));
@@ -351,11 +375,13 @@ public class BrainfuckStudio extends JFrame {
                     return;
 
                 brainfuck.setRunning(false);
+                console.reset();
                 debugger.reset();
                 if(loadingLabel != null)
                     loadingLabel.setVisible(false);
             }
         });
+        buttonStop.setToolTipText("Stop");
         toolbar.add(buttonStop);
 
         loadingLabel = new JLabel(new ImageIcon(this.getClass().getResource("/resources/DualRing.gif")));
@@ -373,11 +399,51 @@ public class BrainfuckStudio extends JFrame {
         downPanel = new JPanel();
         downPanel.setLayout(new BoxLayout(downPanel,BoxLayout.Y_AXIS));
         downPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel panelSpeed = new JPanel();
+        panelSpeed.setBorder(new EmptyBorder(0, 10, 0, 10));
+        panelSpeed.setLayout(new BoxLayout(panelSpeed, BoxLayout.X_AXIS));
+        JLabel labelSpeed = new JLabel("Sleep (ms) ");
+        labelSpeed.setFont(new Font(BrainfuckStudio.FONT, 0, 32));
+        panelSpeed.add(labelSpeed);
+
+        JSlider slider = new JSlider(0, 1000);
+        slider.setValue(0);
+        slider.setBackground(Color.decode("#333333"));
+        slider.setFocusable(false);
+        slider.setPaintLabels(true);
+        slider.setMajorTickSpacing(100);
+        slider.setBorder(null);
+        slider.setUI(new CustomSliderUI(slider));
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                brainfuck.setSleepMs(slider.getValue());
+            }
+        });
+        panelSpeed.add(slider);
+        downPanel.add(panelSpeed);
+
         downPanel.add(debugger);
         TransparentScrollPane scrollPaneConsole = new TransparentScrollPane(console);
         downPanel.add(scrollPaneConsole);
 
         splitPane = new JSplitPane(SwingConstants.HORIZONTAL, upPanel, downPanel);
+        splitPane.setUI(new BasicSplitPaneUI() {
+            @Override
+            public BasicSplitPaneDivider createDefaultDivider() {
+                return new BasicSplitPaneDivider(this)  {
+                    public void setBorder(Border b) {}
+                    @Override
+                    public void paint(Graphics g) {
+                        g.setColor(Color.decode("#555555"));
+                        g.fillRect(0, 0, getSize().width, getSize().height);
+                        super.paint(g);
+                    }
+                };
+            }
+        });
+        splitPane.setBorder(null);
         splitPane.setResizeWeight(0.8);
         this.getContentPane().add(splitPane);
     }
@@ -408,11 +474,8 @@ public class BrainfuckStudio extends JFrame {
     private void loadFont() throws IOException, FontFormatException, URISyntaxException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        // Use this line in editor
-        //ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(this.getClass().getResource("/fonts/Pixeltype.ttf").toURI())));
-
-        // Use this line for .jar
-        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));
+        if(COMPILE_JAR) ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Pixeltype.ttf")));
+        else ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(this.getClass().getResource("/fonts/Pixeltype.ttf").toURI())));
 
         if(os.contains("win"))
             setUIFont(new FontUIResource(new Font(FONT, 0, FONT_SIZE - 2)));

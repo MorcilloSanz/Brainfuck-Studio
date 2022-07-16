@@ -12,17 +12,15 @@ public class Brainfuck {
     private volatile byte [] buffer;
     private volatile int pointer = 0;
     private String output = "";
-
     private volatile boolean running = false;
-
     private Console console;
     private Debugger debugger;
     private BrainfuckStudio brainfuckStudio;
-
     private volatile boolean wait = false;
     private String input;
-
     private int sleepMs = 0;
+    private boolean sleep = true;
+    private volatile boolean stop = false;
 
     public Brainfuck(int bytes) {
         buffer = new byte[bytes];
@@ -75,6 +73,7 @@ public class Brainfuck {
         for(int i = 0; i < code.length(); i ++) {
             if(!running) break;
             int brackets = 0;
+            sleep = true;
             switch(code.charAt(i)) {
                 case '+':
                     buffer[pointer] ++;
@@ -132,18 +131,26 @@ public class Brainfuck {
                     console.setCaretPosition(console.getDocument().getLength());
                 }
                 break;
+                case '*' : {
+                    stop = true;
+                    if(debug) do {  } while(stop);
+                }
+                break;
                 default:
-                    break;
+                    sleep = false; // If its a comment dont sleep, dont waste time
+                break;
             }
             if(debug && (pointer < debugger.length() - 1)) {
                 debugger.setActive(pointer);
                 debugger.setValue(pointer, buffer[pointer]);
             }
             // Sleep time
-            try {
-                Thread.sleep(sleepMs);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if(sleep) {
+                try {
+                    Thread.sleep(sleepMs);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         setRunning(false);
@@ -164,6 +171,10 @@ public class Brainfuck {
 
     public int getPointer() {
         return pointer;
+    }
+
+    public synchronized void setStop(boolean stop) {
+        this.stop = stop;
     }
 
     public byte[] getBuffer() {

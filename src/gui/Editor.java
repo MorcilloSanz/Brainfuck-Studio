@@ -20,7 +20,8 @@ public class Editor extends JTextPane {
     final AttributeSet moveKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(144, 255, 125));
     final AttributeSet valueKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(201, 153, 255));
     final AttributeSet loopKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(0, 82, 255));
-    final AttributeSet consoleKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(255, 0, 43));
+    final AttributeSet consoleKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(255, 63, 95));
+    final AttributeSet breakpointKeyword = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(255, 166, 100));
     final AttributeSet comment = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.decode("#FFFFFF"));
 
     private TabComponent tabComponent;
@@ -50,6 +51,8 @@ public class Editor extends JTextPane {
                         setCharacterAttributes(offset + i, 1, loopKeyword, false);
                     else if(c == '.' || c == ',')
                         setCharacterAttributes(offset + i, 1, consoleKeyword, false);
+                    else if(c == '*')
+                        setCharacterAttributes(offset + i, 1, breakpointKeyword, false);
                     else
                         setCharacterAttributes(offset + i, 1, comment, false);
                 }

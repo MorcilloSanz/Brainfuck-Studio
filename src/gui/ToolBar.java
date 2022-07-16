@@ -7,7 +7,7 @@ public class ToolBar extends JPanel {
 
     public ToolBar() {
         super();
-        setBorder(new EmptyBorder(0, 150, 0, 150));
+        setBorder(new EmptyBorder(0, 10, 0, 10));
         setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
     }
 

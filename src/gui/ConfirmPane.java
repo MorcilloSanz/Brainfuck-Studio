@@ -12,11 +12,13 @@ public class ConfirmPane extends JDialog {
 
     public static final int YES = 1;
     public static final int NO = 0;
+    public static final int CANCEL = 2;
+    public static final int NONE = -1;
     private int response;
 
     public ConfirmPane(final String title, final String text) {
         super();
-        response = 0;
+        response = NONE;
         this.text = text;
         setTitle(title);
         setLocationRelativeTo(null);
@@ -83,6 +85,7 @@ public class ConfirmPane extends JDialog {
         buttonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                response = ConfirmPane.CANCEL;
                 dispose();
             }
         });

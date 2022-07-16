@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class TabComponent extends JPanel {
@@ -17,11 +18,15 @@ public class TabComponent extends JPanel {
 
         labelIcon = new JLabel();
         labelIcon.setIcon(icon);
+        labelIcon.setBorder(new EmptyBorder(2, 0, 0, 0));
 
         label = new JLabel(title);
+        label.setBorder(new EmptyBorder(8, 0, 0, 0));
 
         labelSave = new JLabel(".");
         labelSave.setForeground(Color.blue);
+
+        closeButton.setBorder(new EmptyBorder(5, 0, 0, 0));
 
         add(labelIcon);
         add(Box.createHorizontalStrut(5));

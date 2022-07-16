@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 
@@ -77,14 +78,14 @@ public class StylesLoader {
         UIManager.put("SplitPane.border", BorderFactory.createLineBorder(Color.decode("#333333"), 1));
         UIManager.put("SplitPane.dividerSize", 2);
         // Text pane
-        UIManager.put("TextPane.background", Color.decode("#000000"));
+        UIManager.put("TextPane.background", Color.decode("#222222"));
         UIManager.put("TextPane.foreground", Color.decode("#FFFFFF"));
         UIManager.put("TextPane.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
         UIManager.put("TextPane.caretForeground", Color.decode("#FFFFFF"));
         UIManager.put("TextPane.selectionForeground", Color.decode("#000000"));
         UIManager.put("TextPane.selectionBackground", Color.decode("#c999ff"));
         // Text area
-        UIManager.put("TextArea.background", Color.decode("#000000"));
+        UIManager.put("TextArea.background", Color.decode("#222222"));
         UIManager.put("TextArea.foreground", Color.decode("#FFFFFF"));
         UIManager.put("TextArea.border", BorderFactory.createLineBorder(Color.decode("#333333"), 0));
         UIManager.put("TextArea.caretForeground", Color.decode("#FFFFFF"));
@@ -115,5 +116,10 @@ public class StylesLoader {
         UIManager.put("OptionPane.background", Color.decode("#333333"));
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
         UIManager.put("OptionPane.buttonPadding", 10);
+        // Tool tip
+        UIManager.put("ToolTip.background", Color.decode("#222222"));
+        UIManager.put("ToolTip.foreground", Color.WHITE);
+        Border border = BorderFactory.createLineBorder(new Color(76,79,83)); // The color is #4c4f53.
+        UIManager.put("ToolTip.border", border);
     }
 }

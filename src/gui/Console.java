@@ -54,7 +54,7 @@ public class Console extends JTextArea {
     }
 
     public void deselect() {
-        Border border = BorderFactory.createLineBorder(Color.BLACK);
+        Border border = BorderFactory.createLineBorder(Color.decode("#222222"));
         setBorder(BorderFactory.createCompoundBorder(border,
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
     }

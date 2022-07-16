@@ -30,8 +30,9 @@ public class Debugger extends JPanel {
         setLayout(new BoxLayout(this ,BoxLayout.X_AXIS));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
-        JLabel labelMemory = new JLabel("Output: ");
+        JLabel labelMemory = new JLabel("Output ");
         labelMemory.setFont(new Font(BrainfuckStudio.FONT, 0, 32));
+        labelMemory.setForeground(Color.decode("#c999ff"));
         add(labelMemory);
         panelCells = new JPanel();
         panelCells.setLayout(new BoxLayout(panelCells ,BoxLayout.X_AXIS));
