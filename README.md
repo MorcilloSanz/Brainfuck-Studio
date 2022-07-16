@@ -18,4 +18,3 @@ Retro-like Brainfuck IDE, compiler and debugger
 
 ## GUI 🕹️
 ![alt text](https://github.com/MorcilloSanz/Brainfuck-IDE/blob/main/img/ide.png)
-![alt text](https://github.com/MorcilloSanz/Brainfuck-IDE/blob/main/img/img1.png)
